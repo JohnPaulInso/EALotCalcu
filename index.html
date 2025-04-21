@@ -42,7 +42,7 @@
           <label for="riskMultiplier" class="form-label">Risk Multiplier</label>
           <select class="form-select" id="riskMultiplier">
             <option value="0.167">0.167</option>
-            <option value="0.2" selected>0.2</option>
+            <option value="0.2" >0.2</option>
             <option value="0.3">0.3</option>
             <option value="0.4">0.4</option>
             <option value="0.5">0.5</option>
@@ -58,28 +58,67 @@
       </div>
     </div>
   </div>
+  
+
 
   <script>
+    const eaLotInput = document.getElementById("eaLotSize");
+    const riskMultiplierSelect = document.getElementById("riskMultiplier");
+    const resultDisplay = document.getElementById("result");
+  
     function calculateLotSize() {
-      const eaLotSize = parseFloat(document.getElementById("eaLotSize").value);
-      const multiplier = parseFloat(document.getElementById("riskMultiplier").value);
-
+      const eaLotSize = parseFloat(eaLotInput.value);
+      const multiplier = parseFloat(riskMultiplierSelect.value);
+  
       const yourLotSize = eaLotSize * multiplier;
-      document.getElementById("result").textContent = yourLotSize.toFixed(2);
+      resultDisplay.textContent = isNaN(yourLotSize) ? "-" : yourLotSize.toFixed(2);
     }
-
-    document.getElementById("eaLotSize").addEventListener("input", calculateLotSize);
-    document.getElementById("riskMultiplier").addEventListener("change", calculateLotSize);
+  
+    // Save inputs immediately to localStorage
+    eaLotInput.addEventListener("input", () => {
+      localStorage.setItem("savedEaLotSize", eaLotInput.value);
+      calculateLotSize();
+    });
+  
+    riskMultiplierSelect.addEventListener("change", () => {
+      localStorage.setItem("savedRiskMultiplier", riskMultiplierSelect.value);
+      calculateLotSize();
+    });
+  
+    // Restore saved values on load
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedEaLotSize = localStorage.getItem("savedEaLotSize");
+      const savedRiskMultiplier = localStorage.getItem("savedRiskMultiplier");
+  
+      if (savedEaLotSize !== null) {
+        eaLotInput.value = savedEaLotSize;
+      }
+  
+      if (savedRiskMultiplier !== null) {
+        riskMultiplierSelect.value = savedRiskMultiplier;
+      }
+  
+      calculateLotSize();
+    });
+  
+    // Form submit fallback
     document.getElementById("lotCalcForm").addEventListener("submit", function(e) {
       e.preventDefault();
       calculateLotSize();
     });
   </script>
+  
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
   </script>
+  
+
+
+
+
+  
   
 </body>
 </html>
